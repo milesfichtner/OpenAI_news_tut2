@@ -121,6 +121,15 @@ def main():
     news = get_news("bitcoin")
     print(news[0])
 
+
+
+
+
+
+
+
+
+# assistant class for creating and running threads, allows for function calling and object oriented approach to wrap our news_api call. 
 class AssistantManager:
     thread_id = None
     assistant_id = None
@@ -253,7 +262,11 @@ class AssistantManager:
 
 
 
+    # for streamlit 
+    def get_summary(self):
+        return self.summary
 
+    
     def wait_for_completed(self):
         if self.thread and self.run:
             while True:
@@ -270,9 +283,21 @@ class AssistantManager:
 
                 elif run_status.status == "requires_action":                    
                     print("FUNCTION CALLING NOW...")
-                    self.call_required_functions(self, required_actions)
+                    self.call_required_functions(required_actions=run_status.required_action.submit_tool_outputs.model_dump())
     
         pass
+
+    
+    # run the steps
+    def run_steps(self):
+        run_steps = self.client.beta.threads.runs.steps.list(
+            thread_id=self.thread.id,
+            run_id=self.run.id
+        )
+        print(f"Run-Steps:::: {run_steps}")
+
+
+
 
 
 
